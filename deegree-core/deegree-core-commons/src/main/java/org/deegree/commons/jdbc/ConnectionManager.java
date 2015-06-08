@@ -44,6 +44,7 @@ import static org.deegree.commons.jdbc.ConnectionManager.Type.H2;
 import static org.deegree.commons.jdbc.ConnectionManager.Type.MSSQL;
 import static org.deegree.commons.jdbc.ConnectionManager.Type.Oracle;
 import static org.deegree.commons.jdbc.ConnectionManager.Type.PostgreSQL;
+import static org.deegree.commons.jdbc.ConnectionManager.Type.GeoPackage;
 
 import java.io.File;
 import java.net.URL;
@@ -76,7 +77,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Manages the {@link ConnectionPools} of a {@link DeegreeWorkspace}.
+ * Manages the {@link ConnectionPool} of a {@link DeegreeWorkspace}.
  * <p>
  * TODO complete separation of JDBC parameter definition ({@link JDBCParams}) and connection pooling
  * </p>
@@ -97,7 +98,7 @@ public class ConnectionManager extends AbstractBasicResourceManager implements R
     private static Map<String, ConnectionPool> idToPools = new HashMap<String, ConnectionPool>();
 
     public static enum Type {
-        PostgreSQL, MSSQL, Oracle, H2
+        PostgreSQL, MSSQL, Oracle, H2, GeoPackage
     }
 
     /**
@@ -264,6 +265,9 @@ public class ConnectionManager extends AbstractBasicResourceManager implements R
         }
         if ( url.startsWith( "jdbc:sqlserver:" ) ) {
             idToType.put( connId, MSSQL );
+        }
+        if ( url.startsWith( "jdbc:sqlite:" ) ) {
+            idToType.put( connId, GeoPackage );
         }
     }
 
