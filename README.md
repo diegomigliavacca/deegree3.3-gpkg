@@ -1,11 +1,43 @@
-deegree is open source software for spatial data infrastructures and the geospatial web. deegree includes components for geospatial data management, including data access, visualization, discovery and security. Open standards are at the heart of deegree. The software is built on the standards of the Open Geospatial Consortium (OGC) and the ISO Technical Committee 211.
+This is my new fork of the deegree3 repository (https://github.com/deegree/deegree3), branch 3.3-master, version 3.3.15. It includes an OGC GeoPackage implementation and a fix for the WMTS service.
 
-# User documentation
-General project information and user documentation (e.g. "How to set up WMS and WFS?" or "How to get support?")  can be found on the deegree homepage:
+**INFOS**
 
-http://www.deegree.org
+"The GeoPackage specification describes an open, standards-based, platform-independent, portable, self-describing, compact format for transferring geospatial information. It is a set of conventions for SQLite to store interoperable Features and/or Tiles on a common base" (opengis/geopackage GitHub repository).
 
-# Developer documentation
-Developer-related information (e.g. "How to build deegree webservices?") can be found on the deegree3 project wiki on GiHub:
+In order to access a Geopackage file, you need to create a JDBC connection which points to the Geopackage file.
 
-https://github.com/deegree/deegree3/wiki
+```
+<JDBCConnection xmlns="http://www.deegree.org/jdbc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" configVersion="3.0.0" xsi:schemaLocation="http://www.deegree.org/jdbc http://schemas.deegree.org/jdbc/3.0.0/jdbc.xsd">
+  <Url>jdbc:sqlite:/home/user/World.gpkg</Url>
+  <User>null</User>
+  <Password>null</Password>
+</JDBCConnection>
+```
+
+User and Password can just to be set to "null", given that GeoPackage is based on SQLite.
+
+For the feature part, the user needs to configure in Deegree:
+an SQL feature store;
+a WFS service;
+a Feature Layer.
+
+For the tile part, the user needs to configure:
+a WMTS service;
+a Gpkg Tile Store;
+a Tile Layer.
+
+Configuration of a Gpkg Tile Store (example):
+
+```
+<GpkgTileStore xmlns="http://www.deegree.org/datasource/tile/gpkg" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.deegree.org/datasource/tile/gpkg http://schemas.deegree.org/datasource/tile/gpkg/3.2.0/geopackage.xsd" configVersion="3.2.0">
+
+  <TileDataSet>
+    <JDBCConnId>gpkg</JDBCConnId>
+    <Identifier>gpkg_tilelayer</Identifier>
+    <TileMapping table="fromosm_tiles"/>
+    <!-- [0..1]: the mime type of the desired image output format. Default is image/png -->
+    <ImageFormat>image/png</ImageFormat>
+</TileDataSet>
+
+</GpkgTileStore>
+```
